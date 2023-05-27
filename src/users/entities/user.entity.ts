@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Length, IsDate, IsUrl, IsEmail } from 'class-validator';
 
-@Entity()
+@Entity({ schema: 'kupipodariday' })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -42,9 +42,9 @@ export class User {
   //@Column()
   //wishes
 
-  //   @Column()
-  //   offers
+  //@Column()
+  //offers
 
-  //  @Column()
-  //  wishlists
+  //@Column()
+  //wishlists
 }
