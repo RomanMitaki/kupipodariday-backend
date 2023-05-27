@@ -5,10 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Length, IsDate, IsUrl } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber } from 'class-validator';
 
 @Entity({ schema: 'kupipodariday' })
-export class Wishlist {
+export class Offer {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,18 +20,17 @@ export class Wishlist {
   @IsDate()
   updatedAt: Date;
 
-  @Column()
-  @Length(1, 250)
-  name: string;
+  // @Column()
+  // user
 
-  @Column()
-  @Length(1, 1500)
-  description: string;
+  // @Column()
+  // item
 
-  @Column()
-  @IsUrl()
-  image: string;
+  @Column({ type: 'decimal', scale: 2 })
+  @IsNumber()
+  amount: number;
 
-  //@Column()
-  //items
+  @Column({ default: false })
+  @IsBoolean()
+  hidden: boolean;
 }
