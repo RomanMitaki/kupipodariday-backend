@@ -4,8 +4,13 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Length, IsDate, IsUrl } from 'class-validator';
+import { Wish } from '../../wishes/entities/wish.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity({ schema: 'kupipodariday' })
 export class Wishlist {
@@ -32,6 +37,10 @@ export class Wishlist {
   @IsUrl()
   image: string;
 
-  //@Column()
-  //items
+  @ManyToMany(() => Wish, (wish) => wish.name)
+  @JoinTable()
+  items: Wish[];
+
+  @ManyToOne(() => User, (user) => user.wishlists)
+  owner: User;
 }

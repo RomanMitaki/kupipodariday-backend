@@ -4,8 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Length, IsDate, IsUrl, IsEmail } from 'class-validator';
+import { Wish } from '../../wishes/entities/wish.entity';
+import { Offer } from '../../offers/entities/offer.entity';
+import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 
 @Entity({ schema: 'kupipodariday' })
 export class User {
@@ -39,12 +43,12 @@ export class User {
   @Column()
   password: string;
 
-  //@Column()
-  //wishes
+  @OneToMany(() => Wish, (wish) => wish.owner)
+  wishes: Wish[];
 
-  //@Column()
-  //offers
+  @OneToMany(() => Offer, (offer) => offer.user)
+  offers: Offer[];
 
-  //@Column()
-  //wishlists
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
+  wishlists: Wishlist[];
 }

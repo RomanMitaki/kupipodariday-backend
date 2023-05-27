@@ -4,8 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { Length, IsDate, IsUrl, IsNumber, IsInt } from 'class-validator';
+import { User } from '../../users/entities/user.entity';
+import { Offer } from '../../offers/entities/offer.entity';
 
 @Entity({ schema: 'kupipodariday' })
 export class Wish {
@@ -40,17 +44,17 @@ export class Wish {
   @IsNumber()
   raised: number;
 
-  //@Column()
-  //owner
+  @ManyToOne(() => User, (owner) => owner.wishes)
+  owner: User;
 
   @Column()
   @Length(1, 1024)
   description: string;
 
-  //@Column()
-  //offers
+  @OneToMany(() => Offer, (offer) => offer.item)
+  offers: Offer[];
 
-  @Column()
+  @Column({ default: 0 })
   @IsInt()
   copied: number;
 }
