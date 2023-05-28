@@ -5,6 +5,7 @@ import { UsersModule } from './users/users-module/users.module';
 import { WishesModule } from './wishes/wishes-module/wishes.module';
 import { WishlistsModule } from './wishlists/wishlists-module/wishlists.module';
 import { OffersModule } from './offers/offers-module/offers.module';
+import { ConfigModule } from '@nestjs/config';
 import { User } from './users/entities/user.entity';
 import { Wish } from './wishes/entities/wish.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
@@ -16,13 +17,14 @@ import { Offer } from './offers/entities/offer.entity';
     WishesModule,
     WishlistsModule,
     OffersModule,
+    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'student',
-      password: 'student',
-      database: 'kupipodariday',
+      host: process.env.POSTGRES_HOST,
+      port: Number(process.env.POSTGRES_PORT),
+      username: process.env.POSTGRES_USERNAME,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_NAME,
       entities: [User, Wish, Wishlist, Offer],
       synchronize: true,
     }),
