@@ -1,12 +1,16 @@
 import {
+  IsDate,
   IsEmail,
-  IsNotEmpty,
+  IsInt,
   IsOptional,
   IsUrl,
   Length,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class UserProfileResponseDto {
+  @IsInt()
+  id: number;
+
   @Length(2, 30)
   username: string;
 
@@ -21,6 +25,9 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
-  password: string;
+  @IsDate()
+  createdAt: Date;
+
+  @IsDate()
+  updatedAt: Date;
 }

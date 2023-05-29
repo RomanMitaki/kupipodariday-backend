@@ -18,7 +18,7 @@ export class UsersController {
   }
 
   @Get('me')
-  getMe(@Req() req) {
+  getOwn(@Req() req) {
     return this.usersService.findOne(req.user.id);
   }
 }
