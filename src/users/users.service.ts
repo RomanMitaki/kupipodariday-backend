@@ -25,7 +25,15 @@ export class UsersService {
   }
 
   async updateOne(id: number, updateUserDto: UpdateUserDto) {
-    return await this.usersRepository.update({ id }, updateUserDto);
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.hashService.generateHash(
+        updateUserDto.password,
+      );
+    }
+    await this.usersRepository.update({ id }, updateUserDto);
+    const updatedOne = await this.findOne(id);
+    delete updatedOne.password;
+    return updatedOne;
   }
 
   async findByUsername(username: string) {
