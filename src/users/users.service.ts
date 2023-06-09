@@ -5,6 +5,7 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HashService } from '../auth/hash/hash.service';
+import { FindUsersDto } from './dto/find-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +23,12 @@ export class UsersService {
 
   async findOne(id: number): Promise<User> {
     return await this.usersRepository.findOneBy({ id });
+  }
+
+  findUsers({ query }: FindUsersDto): Promise<User[]> {
+    return this.usersRepository.find({
+      where: [{ email: query }, { username: query }],
+    });
   }
 
   async updateOne(id: number, updateUserDto: UpdateUserDto) {
