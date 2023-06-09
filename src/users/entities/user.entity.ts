@@ -24,7 +24,7 @@ export class User {
   @IsDate()
   updatedAt: Date;
 
-  @Column({ unique: true })
+  @Column()
   @Length(2, 30)
   username: string;
 
