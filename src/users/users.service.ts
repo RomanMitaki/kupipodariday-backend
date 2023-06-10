@@ -6,12 +6,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HashService } from '../auth/hash/hash.service';
 import { FindUsersDto } from './dto/find-users.dto';
+import { Wish } from '../wishes/entities/wish.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(Wish)
+    private readonly wishesRepository: Repository<Wish>,
     private hashService: HashService,
   ) {}
 
@@ -25,7 +28,7 @@ export class UsersService {
     return await this.usersRepository.findOneBy({ id });
   }
 
-  findUsers({ query }: FindUsersDto): Promise<User[]> {
+  findMany({ query }: FindUsersDto): Promise<User[]> {
     return this.usersRepository.find({
       where: [{ email: query }, { username: query }],
     });
@@ -53,5 +56,12 @@ export class UsersService {
 
   async remove(id: number) {
     return await this.usersRepository.delete({ id });
+  }
+
+  async getWishes(id: number) {
+    return await this.wishesRepository.find({
+      where: { owner: { id } },
+      relations: ['owner'],
+    });
   }
 }

@@ -10,20 +10,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtGuard } from '../auth/guards/jwt-auth.guard';
 import { FindUsersDto } from './dto/find-users.dto';
+import { Wish } from '../wishes/entities/wish.entity';
 
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
 
   @Patch('me')
   updateOne(@Req() req, @Body() updateUserDto: UpdateUserDto) {
@@ -46,8 +41,19 @@ export class UsersController {
     return user;
   }
 
+  @Get('me/wishes')
+  async getOwnWishes(@Req() req): Promise<Wish[]> {
+    return await this.usersService.getWishes(req.user.id);
+  }
+
+  @Get(':username/wishes')
+  async getWishesByUsername(@Param('username') username: string) {
+    const user = await this.getUserByName(username);
+    return this.usersService.getWishes(user.id);
+  }
+
   @Post('find')
-  async findUsers(@Body() findUser: FindUsersDto) {
-    return await this.usersService.findUsers(findUser);
+  async findMany(@Body() findUser: FindUsersDto) {
+    return await this.usersService.findMany(findUser);
   }
 }
