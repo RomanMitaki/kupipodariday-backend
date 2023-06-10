@@ -87,4 +87,29 @@ export class WishesService {
     await this.wishesRepository.delete(wishId);
     return wish;
   }
+
+  async copyWish(wishId: number, user: User) {
+    const wish = await this.findOne(wishId);
+    if (!wish) {
+      throw new NotFoundException('Желание не найдено');
+    }
+    if (user.id === wish.owner.id) {
+      throw new ForbiddenException('Это желание уже в вашем списке');
+    }
+    await this.wishesRepository.update(wishId, {
+      copied: (wish.copied += 1),
+    });
+
+    const copiedWish = {
+      ...wish,
+      raised: 0,
+      owner: user.id,
+      offers: [],
+    };
+    delete copiedWish.id;
+    delete copiedWish.createdAt;
+    delete copiedWish.updatedAt;
+    await this.create(user, copiedWish);
+    return {};
+  }
 }

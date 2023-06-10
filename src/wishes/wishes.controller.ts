@@ -40,6 +40,11 @@ export class WishesController {
     return await this.wishesService.create(req.user, createWishDto);
   }
 
+  @Post(':id/copy')
+  copyWish(@Param('id') id: number, @Req() req) {
+    return this.wishesService.copyWish(id, req.user);
+  }
+
   @Patch(':id')
   async updateOne(
     @Req() req,
