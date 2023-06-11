@@ -49,9 +49,9 @@ export class WishesController {
   async updateOne(
     @Req() req,
     @Param('id') id: string,
-    @Body() UpdatedWish: UpdateWishDto,
+    @Body() updatedWish: UpdateWishDto,
   ) {
-    return await this.wishesService.updateOne(+id, UpdatedWish, req.user.id);
+    return await this.wishesService.updateOne(+id, updatedWish, req.user.id);
   }
 
   @Delete(':id')

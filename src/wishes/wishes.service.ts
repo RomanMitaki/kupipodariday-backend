@@ -14,7 +14,7 @@ import { User } from '../users/entities/user.entity';
 export class WishesService {
   constructor(
     @InjectRepository(Wish)
-    private readonly wishesRepository: Repository<Wish>,
+    private wishesRepository: Repository<Wish>,
   ) {}
 
   async create(owner: User, createWishDto: CreateWishDto): Promise<Wish> {
@@ -59,7 +59,7 @@ export class WishesService {
     });
   }
 
-  async updateOne(wishId: number, UpdatedWish: UpdateWishDto, userId: number) {
+  async updateOne(wishId: number, updatedWish: UpdateWishDto, userId: number) {
     const wish = await this.findOne(wishId);
 
     if (userId !== wish.owner.id) {
@@ -73,7 +73,11 @@ export class WishesService {
     if (!wish) {
       throw new NotFoundException('Желание не найдено');
     }
-    return await this.wishesRepository.update(wishId, UpdatedWish);
+    return await this.wishesRepository.update(wishId, updatedWish);
+  }
+
+  async updateSum(wishId: number, raised: number) {
+    return await this.wishesRepository.update(wishId, { raised: raised });
   }
 
   async remove(wishId: number, userId: number) {
