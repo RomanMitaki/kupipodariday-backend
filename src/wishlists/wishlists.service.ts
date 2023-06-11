@@ -28,4 +28,28 @@ export class WishlistsService {
     });
     return this.wishlistsRepository.save(wishList);
   }
+
+  async findMany() {
+    const wishlists = await this.wishlistsRepository.find({
+      relations: {
+        owner: true,
+        items: true,
+      },
+    });
+    return wishlists.map((wishlist) => {
+      delete wishlist.owner.password;
+      delete wishlist.owner.email;
+      return wishlist;
+    });
+  }
+
+  async findWishlistById(id: number) {
+    const wishlist = await this.wishlistsRepository.findOne({
+      where: { id },
+      relations: ['owner', 'items'],
+    });
+    delete wishlist.owner.password;
+    delete wishlist.owner.email;
+    return wishlist;
+  }
 }
