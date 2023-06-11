@@ -82,4 +82,23 @@ export class WishlistsService {
     delete updatedWishList.owner.email;
     return updatedWishList;
   }
+
+  async remove(wishlistId: number, userId: number) {
+    const wishlist = await this.wishlistsRepository.findOne({
+      where: { id: wishlistId },
+      relations: {
+        owner: true,
+        items: true,
+      },
+    });
+    if (!wishlist) {
+      throw new NotFoundException('Коллекция не найдена');
+    }
+
+    if (userId !== wishlist.owner.id) {
+      throw new ForbiddenException('Это не ваша коллекция');
+    }
+    await this.wishlistsRepository.delete(wishlistId);
+    return wishlist;
+  }
 }

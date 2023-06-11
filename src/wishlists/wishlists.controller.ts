@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -40,5 +41,10 @@ export class WishlistsController {
     @Req() req,
   ) {
     return this.wishlistsService.updateOne(req.user, +id, updateWishlistDto);
+  }
+
+  @Delete(':id')
+  async remove(@Req() req, @Param('id') id: string) {
+    return this.wishlistsService.remove(+id, req.user.id);
   }
 }
