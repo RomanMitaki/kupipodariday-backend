@@ -76,7 +76,7 @@ export class WishesService {
     return await this.wishesRepository.update(wishId, updatedWish);
   }
 
-  async updateSum(wishId: number, raised: number) {
+  async updateRaised(wishId: number, raised: number) {
     return await this.wishesRepository.update(wishId, { raised: raised });
   }
 

@@ -4,7 +4,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { Offer } from './entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -16,6 +16,7 @@ export class OffersService {
     @InjectRepository(Offer)
     private offersRepository: Repository<Offer>,
     private wishesService: WishesService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(user: User, createOfferDto: CreateOfferDto): Promise<Offer> {
@@ -34,24 +35,35 @@ export class OffersService {
     }
 
     wish.raised = sum;
-    await this.wishesService.updateSum(wish.id, wish.raised);
 
-    const offer = await this.offersRepository.create({
-      ...createOfferDto,
-      user: user,
-      item: wish,
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    delete offer.user.password;
-    delete offer.user.email;
-    delete offer.item.owner.password;
-    delete offer.item.owner.email;
+    try {
+      await this.wishesService.updateRaised(wish.id, wish.raised);
 
-    if (!offer.hidden) {
-      delete offer.user.username;
+      const offer = await this.offersRepository.create({
+        ...createOfferDto,
+        user: user,
+        item: wish,
+      });
+
+      delete offer.user.password;
+      delete offer.user.email;
+      delete offer.item.owner.password;
+      delete offer.item.owner.email;
+
+      if (!offer.hidden) {
+        delete offer.user.username;
+      }
+
+      return await this.offersRepository.save(offer);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
-
-    return await this.offersRepository.save(offer);
   }
 
   async findMany() {
