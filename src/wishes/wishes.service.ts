@@ -88,6 +88,11 @@ export class WishesService {
     if (userId !== wish.owner.id) {
       throw new ForbiddenException('Это не ваше желание');
     }
+    if (wish.raised !== 0 && wish.offers.length !== 0) {
+      throw new ForbiddenException(
+        'Желание уже исполняется и его нельзя удалить',
+      );
+    }
     await this.wishesRepository.delete(wishId);
     return wish;
   }
